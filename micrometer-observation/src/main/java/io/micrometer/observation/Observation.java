@@ -51,7 +51,7 @@ public interface Observation extends ObservationView {
     /**
      * No-op observation.
      */
-    Observation NOOP = new NoopObservation();
+    Observation NOOP = new NoopObservation(new Context());
 
     /**
      * Create and start an {@link Observation} with the given name. All Observations of
@@ -120,12 +120,10 @@ public interface Observation extends ObservationView {
      */
     static <T extends Context> Observation createNotStarted(String name, Supplier<T> contextSupplier,
             @Nullable ObservationRegistry registry) {
-        if (registry == null || registry.isNoop()) {
-            return NOOP;
-        }
         Context context = contextSupplier.get();
-        if (!registry.observationConfig().isObservationEnabled(name, context)) {
-            return NOOP;
+        if (registry == null || registry.isNoop()
+                || !registry.observationConfig().isObservationEnabled(name, context)) {
+            return new NoopObservation(context);
         }
         return new SimpleObservation(name, registry, context == null ? new Context() : context);
     }
@@ -163,7 +161,7 @@ public interface Observation extends ObservationView {
             ObservationConvention<T> defaultConvention, Supplier<T> contextSupplier,
             @Nullable ObservationRegistry registry) {
         if (registry == null || registry.isNoop()) {
-            return Observation.NOOP;
+            return new NoopObservation(contextSupplier.get());
         }
         ObservationConvention<T> convention;
         T context = contextSupplier.get();
@@ -174,7 +172,7 @@ public interface Observation extends ObservationView {
             convention = registry.observationConfig().getObservationConvention(context, defaultConvention);
         }
         if (!registry.observationConfig().isObservationEnabled(convention.getName(), context)) {
-            return NOOP;
+            return new NoopObservation(contextSupplier.get());
         }
         return new SimpleObservation(convention, registry, context == null ? new Context() : context);
     }
@@ -307,11 +305,11 @@ public interface Observation extends ObservationView {
     static <T extends Context> Observation createNotStarted(ObservationConvention<T> observationConvention,
             Supplier<T> contextSupplier, ObservationRegistry registry) {
         if (registry == null || registry.isNoop() || observationConvention == NoopObservationConvention.INSTANCE) {
-            return NOOP;
+            return new NoopObservation(contextSupplier.get());
         }
         T context = contextSupplier.get();
         if (!registry.observationConfig().isObservationEnabled(observationConvention.getName(), context)) {
-            return NOOP;
+            return new NoopObservation(context);
         }
         return new SimpleObservation(observationConvention, registry, context == null ? new Context() : context);
     }
@@ -412,7 +410,7 @@ public interface Observation extends ObservationView {
      * @return {@code true} when this is a no-op observation
      */
     default boolean isNoop() {
-        return this == NOOP;
+        return this instanceof NoopObservation;
     }
 
     /**

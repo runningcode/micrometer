@@ -31,6 +31,12 @@ final class NoopObservation implements Observation {
 
     private static final Context CONTEXT = new Context();
 
+    private final Context context;
+
+    NoopObservation(Context context) {
+        this.context = context;
+    }
+
     @Override
     public Observation contextualName(@Nullable String contextualName) {
         return this;
@@ -83,7 +89,7 @@ final class NoopObservation implements Observation {
 
     @Override
     public Context getContext() {
-        return CONTEXT;
+        return this.context;
     }
 
     @Override
@@ -103,15 +109,17 @@ final class NoopObservation implements Observation {
         /**
          * Instance of {@link NoopScope}.
          */
-        static final Scope INSTANCE = new NoopScope();
+        static final Scope INSTANCE = new NoopScope(new NoopObservation(new Context()));
 
-        private NoopScope() {
+        private final Observation observation;
 
+        private NoopScope(Observation observation) {
+            this.observation = observation;
         }
 
         @Override
         public Observation getCurrentObservation() {
-            return Observation.NOOP;
+            return this.observation;
         }
 
         @Override

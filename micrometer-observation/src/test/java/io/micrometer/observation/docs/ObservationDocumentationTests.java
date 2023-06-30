@@ -15,23 +15,14 @@
  */
 package io.micrometer.observation.docs;
 
-import java.util.function.Supplier;
-
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
-import io.micrometer.observation.Observation;
-import io.micrometer.observation.Observation.Context;
-import io.micrometer.observation.ObservationFilter;
-import io.micrometer.observation.ObservationRegistry;
-import io.micrometer.observation.GlobalObservationConvention;
-import io.micrometer.observation.ObservationConvention;
+import io.micrometer.observation.*;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 class ObservationDocumentationTests {
 
@@ -129,19 +120,6 @@ class ObservationDocumentationTests {
         assertThat(context.getLowCardinalityKeyValues()).containsOnly(KeyValue.of("always added", "tag"),
                 KeyValue.of("global", "low cardinality"));
         assertThat(context.getHighCardinalityKeyValues()).containsOnly(KeyValue.of("global", "high cardinality"));
-    }
-
-    @Test
-    void createNotStartedShouldNotCreateContextWithNoopRegistry() {
-        ObservationRegistry registry = ObservationRegistry.NOOP;
-
-        @SuppressWarnings("unchecked")
-        Supplier<Context> supplier = mock(Supplier.class);
-
-        Observation observation = TestConventionObservation.CONTEXTUAL_NAME.observation(null,
-                new FirstObservationConvention(), supplier, registry);
-        assertThat(observation.isNoop()).isTrue();
-        verifyNoInteractions(supplier);
     }
 
     private ObservationRegistry observationRegistry() {

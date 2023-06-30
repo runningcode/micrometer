@@ -50,14 +50,14 @@ class ObservationTests {
     void notHavingAnyHandlersShouldResultInNoopObservation() {
         Observation observation = Observation.createNotStarted("foo", registry);
 
-        assertThat(observation).isSameAs(Observation.NOOP);
+        assertThat(observation.isNoop()).isTrue();
     }
 
     @Test
     void notHavingARegistryShouldResultInNoopObservation() {
         Observation observation = Observation.createNotStarted("foo", null);
 
-        assertThat(observation).isSameAs(Observation.NOOP);
+        assertThat(observation.isNoop()).isTrue();
     }
 
     @Test
@@ -67,7 +67,7 @@ class ObservationTests {
 
         Observation observation = Observation.createNotStarted("foo", registry);
 
-        assertThat(observation).isSameAs(Observation.NOOP);
+        assertThat(observation.isNoop()).isTrue();
     }
 
     @Test
@@ -77,7 +77,7 @@ class ObservationTests {
 
         Observation observation = Observation.createNotStarted("foo", registry);
 
-        assertThat(observation).isNotSameAs(Observation.NOOP);
+        assertThat(observation.isNoop()).isFalse();
     }
 
     @Test
@@ -342,6 +342,31 @@ class ObservationTests {
     }
 
     @Test
+    void observeWithContextWithPredicate() {
+        MyContext myContext = new MyContext();
+        String result;
+
+        // with function
+        result = Observation.createNotStarted("service", () -> myContext, registry)
+            .observeWithContext((MyContext context) -> {
+                context.setResult("bar");
+                return "bar";
+            });
+
+        assertThat(result).isEqualTo("bar");
+    }
+
+    static class MyContext extends Observation.Context {
+
+        String result;
+
+        void setResult(String result) {
+            this.result = result;
+        }
+
+    }
+
+    @Test
     void observeWithFunction() {
         CustomContext context = new CustomContext();
         AtomicReference<CustomContext> contextHolder = new AtomicReference<>();
@@ -374,7 +399,8 @@ class ObservationTests {
             });
         assertThat(result).isEqualTo("Hello");
 
-        // with Noop registry, supplier provided context will not be created
+        // with Noop registry, supplier provided context will be created so that types are
+        // correct
         AtomicBoolean contextCreated = new AtomicBoolean();
         Supplier<Context> supplier = () -> new Context() {
             {
@@ -387,8 +413,7 @@ class ObservationTests {
                 passedContextHolder.set(ctx);
                 return "World";
             });
-        assertThat(passedContextHolder).as("passed a noop context").hasValue(NoopObservation.NOOP.getContext());
-        assertThat(contextCreated).isFalse();
+        assertThat(contextCreated).isTrue();
         assertThat(result).isEqualTo("World");
     }
 
