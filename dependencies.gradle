@@ -75,6 +75,9 @@ def VERSIONS = [
         'org.hsqldb:hsqldb:2.5.+', // 2.6.0 requires JDK 11.
         'org.jooq:jooq:3.14.+',
         'org.jsr107.ri:cache-ri-impl:1.0.0',
+        'org.jboss.resteasy:resteasy-client:6.2.4.Final',
+        'org.jboss.resteasy:resteasy-netty4:6.2.4.Final',
+        'javax.validation:validation-api:1.0.0.GA',
         'org.latencyutils:LatencyUtils:latest.release',
         'org.mockito:mockito-core:5.+', // 5.x requires JDK 11.
         'org.mockito:mockito-inline:5.+',
