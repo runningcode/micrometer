@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 VMware, Inc.
+ * Copyright 2023 VMware, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micrometer.core.instrument.binder.http;
+package io.micrometer.jakarta.instrument.binder.http;
 
 import io.micrometer.common.KeyValues;
+import io.micrometer.core.instrument.binder.http.AbstractDefaultHttpServerRequestObservationConvention;
 
 /**
- * Default {@link HttpServerRequestObservationConvention}.
+ * Default {@link HttpJakartaServerRequestObservationConvention}.
  *
  * @author Brian Clozel
+ * @author Marcin Grzejszczak
  * @since 1.12.0
  */
-public class DefaultHttpServerRequestObservationConvention extends AbstractDefaultHttpServerRequestObservationConvention
-        implements HttpServerRequestObservationConvention {
+public class DefaultHttpJakartaServerRequestObservationConvention extends
+        AbstractDefaultHttpServerRequestObservationConvention implements HttpJakartaServerRequestObservationConvention {
+
+    public static DefaultHttpJakartaServerRequestObservationConvention INSTANCE = new DefaultHttpJakartaServerRequestObservationConvention();
 
     private static final String DEFAULT_NAME = "http.server.requests";
 
@@ -33,7 +37,7 @@ public class DefaultHttpServerRequestObservationConvention extends AbstractDefau
     /**
      * Create a convention with the default name {@code "http.server.requests"}.
      */
-    public DefaultHttpServerRequestObservationConvention() {
+    public DefaultHttpJakartaServerRequestObservationConvention() {
         this(DEFAULT_NAME);
     }
 
@@ -41,7 +45,7 @@ public class DefaultHttpServerRequestObservationConvention extends AbstractDefau
      * Create a convention with a custom name.
      * @param name the observation name
      */
-    public DefaultHttpServerRequestObservationConvention(String name) {
+    public DefaultHttpJakartaServerRequestObservationConvention(String name) {
         this.name = name;
     }
 
@@ -51,26 +55,24 @@ public class DefaultHttpServerRequestObservationConvention extends AbstractDefau
     }
 
     @Override
-    public String getContextualName(HttpServerRequestObservationContext context) {
-        String method = context.getCarrier().getMethod();
-        if (method == null) {
-            return null;
-        }
-        return getContextualName(method.toLowerCase(), context.getPathPattern());
+    public String getContextualName(HttpJakartaServerRequestObservationContext context) {
+        return getContextualName(context.getCarrier().getMethod().toLowerCase(), context.getPathPattern());
     }
 
     @Override
-    public KeyValues getLowCardinalityKeyValues(HttpServerRequestObservationContext context) {
+    public KeyValues getLowCardinalityKeyValues(HttpJakartaServerRequestObservationContext context) {
         String method = context.getCarrier() != null ? context.getCarrier().getMethod() : null;
         Integer status = context.getResponse() != null ? context.getResponse().getStatus() : null;
         String pathPattern = context.getPathPattern();
-        String requestUri = context.getCarrier() != null ? context.getCarrier().getRequestURI() : null;
+        String requestUri = context.getCarrier() != null ? context.getCarrier().getUriInfo().getRequestUri().toString()
+                : null;
         return getLowCardinalityKeyValues(context.getError(), method, status, pathPattern, requestUri);
     }
 
     @Override
-    public KeyValues getHighCardinalityKeyValues(HttpServerRequestObservationContext context) {
-        String requestUri = context.getCarrier() != null ? context.getCarrier().getRequestURI() : null;
+    public KeyValues getHighCardinalityKeyValues(HttpJakartaServerRequestObservationContext context) {
+        String requestUri = context.getCarrier() != null ? context.getCarrier().getUriInfo().getRequestUri().toString()
+                : null;
         return getHighCardinalityKeyValues(requestUri);
     }
 

@@ -345,7 +345,8 @@ subprojects {
 
             check.dependsOn("testModules")
 
-            if (!(project.name in ['micrometer-osgi-test'])) {
+            // TODO: Remove jakarta back once it's released at least once
+            if (!(project.name in ['micrometer-osgi-test', 'micrometer-jakarta'])) {
                 apply plugin: 'me.champeau.gradle.japicmp'
                 apply plugin: 'de.undercouch.download'
 
