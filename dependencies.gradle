@@ -94,7 +94,10 @@ def VERSIONS = [
         'org.testcontainers:mongodb:latest.release',
         'org.testcontainers:testcontainers:latest.release',
         'ru.lanwen.wiremock:wiremock-junit5:latest.release',
-        'software.amazon.awssdk:cloudwatch:latest.release'
+        'software.amazon.awssdk:cloudwatch:latest.release',
+        'javax.ws.rs:javax.ws.rs-api:2.+',
+        'jakarta.ws.rs:jakarta.ws.rs-api:3.+',
+        'jakarta.servlet:jakarta.servlet-api:5.+'
 ]
 
 def PLATFORM_BOMS = [

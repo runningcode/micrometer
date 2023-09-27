@@ -67,8 +67,8 @@ jar {
 dependencies {
     api project(":micrometer-commons")
     api project(":micrometer-observation")
-    optionalApi 'javax.ws.rs:javax.ws.rs-api:2.+' // javax
-    optionalApi 'jakarta.ws.rs:jakarta.ws.rs-api:3.+' // jakarta
+    optionalApi 'javax.ws.rs:javax.ws.rs-api' // javax
+    optionalApi 'jakarta.ws.rs:jakarta.ws.rs-api' // jakarta
 
     java11Api project(":micrometer-commons")
     java11Api project(":micrometer-observation")
@@ -97,7 +97,7 @@ dependencies {
     // server runtime monitoring
     optionalApi 'org.eclipse.jetty:jetty-server'
     // jakarta servlet
-    optionalApi 'jakarta.servlet:jakarta.servlet-api:5.+'
+    optionalApi 'jakarta.servlet:jakarta.servlet-api'
     optionalApi 'org.eclipse.jetty:jetty-client'
     optionalApi 'org.apache.tomcat.embed:tomcat-embed-core'
     optionalApi 'org.glassfish.jersey.core:jersey-server'

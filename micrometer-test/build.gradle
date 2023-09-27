@@ -61,6 +61,7 @@ dependencies {
     testImplementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-jdk-http:2.+'
     // necessary for Jersey test framework
     testRuntimeOnly 'org.glassfish.jersey.inject:jersey-hk2'
+    testImplementation 'javax.ws.rs:javax.ws.rs-api'
 }
 
 java11Test {
